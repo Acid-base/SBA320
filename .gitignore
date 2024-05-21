@@ -129,3 +129,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 project-plan.md
+apidoc.md
+src/components/mockSchema.js
