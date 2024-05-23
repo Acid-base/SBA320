@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../../backend/api';
 
 const MyComponent = () => {
   const [image, setImage] = useState(null);
