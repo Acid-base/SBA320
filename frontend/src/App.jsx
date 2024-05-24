@@ -1,43 +1,52 @@
-// E:\SBA320\src\App.jsx
-// eslint-disable-next-line no-unused-vars
+// App.jsx - The main component of your React application
 import React, { useState, useEffect } from 'react';
-import Papa from 'papaparse';
+import Papa from 'papaparse'; 
 import SearchBar from './components/SearchBar';
 import ResultsList from './components/ResultsList';
+
 function App() {
-  const [mushrooms, setMushrooms] = useState([]); // State for all mushrooms
-  const [searchResults, setSearchResults] = useState([]); // State for filtered results
+  const [mushrooms, setMushrooms] = useState([]); // All mushroom data
+  const [searchResults, setSearchResults] = useState([]); // Filtered results
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch('/data/names.csv'); // Adjust path if needed
-      const reader = response.body.getReader();
-      const result = await reader.read(); // Get all data from CSV
-      const decoder = new TextDecoder('utf-8');
-      const csv = decoder.decode(result.value); 
-      
-      Papa.parse(csv, {
-        header: true,
-        complete: (results) => {
-          setMushrooms(results.data); 
-        }
-      });
+    // This effect runs after the component renders
+    const fetchMushrooms = async () => {
+      try {
+        // Fetch your CSV data (replace '/mushrooms.csv' with the correct URL)
+        const response = await fetch('/mushrooms.csv'); 
+        const reader = response.body.getReader();
+        const result = await reader.read(); 
+        const decoder = new TextDecoder('utf-8');
+        // ... (parse CSV data using Papa.parse or similar) ...
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle the error (e.g., display an error message)
+      }
     };
-    fetchData();
-  }, []); 
+
+    // Call the function to fetch data when the component mounts
+    fetchMushrooms(); 
+  }, []); // The empty array [] means this effect runs once on mount
 
   const handleSearch = (searchTerm) => {
-    // Implement search logic here using the 'mushrooms' state
-    // Update searchResults state with filtered results
+    // Filter the 'mushrooms' array based on the 'searchTerm'
+    const results = mushrooms.filter(mushroom => 
+      mushroom.commonName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    // Update 'searchResults' state with the filtered results
+    setSearchResults(results); 
   };
 
   return (
     <div>
       <h1>Mushroom Identification Helper</h1>
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSearch={handleSearch} /> 
+      {/* Pass the 'handleSearch' function to SearchBar */}
       <ResultsList results={searchResults} /> 
+      {/* Pass the filtered 'searchResults' to ResultsList */}
     </div>
   );
 }
 
 export default App; 
+

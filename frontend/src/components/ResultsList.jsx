@@ -1,10 +1,13 @@
+// ResultsList.jsx - A React component to display a list of mushrooms
 import React from 'react';
-import MushroomCard from './MushroomCard';
+import MushroomCard from './MushroomCard'; // Import the MushroomCard component
 
-function ResultsList({ results }) { // results prop will be passed from App
+function ResultsList({ results }) { 
+  // 'results' prop will be an array of mushroom data
   return (
     <ul>
       {results.map(result => (
+        // Map through 'results' and render a MushroomCard for each
         <MushroomCard key={result.id} mushroom={result} />
       ))}
     </ul>
@@ -12,3 +15,4 @@ function ResultsList({ results }) { // results prop will be passed from App
 }
 
 export default ResultsList;
+
