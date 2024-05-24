@@ -131,3 +131,8 @@ dist
 project-plan.md
 apidoc.md
 src/components/mockSchema.js
+backend/mockSchema.js
+backend/api/mushroomObserverAPI.js
+.vite/deps_temp_6f38d42c/package.json
+backend/mockSchema.js
+backend/api/example.js

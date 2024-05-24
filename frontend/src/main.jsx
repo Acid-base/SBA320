@@ -1,5 +1,4 @@
-// main.jsx - The entry point of your React application
-import React from 'react';
+// main.jsx - 
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx'; // Import the main App component
 import './index.css';

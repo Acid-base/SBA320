@@ -6,13 +6,12 @@ function ResultsList({ results }) {
   // 'results' prop will be an array of mushroom data
   return (
     <ul>
-      {results.map(result => (
+      {results.map(mushroom => (
         // Map through 'results' and render a MushroomCard for each
-        <MushroomCard key={result.id} mushroom={result} />
+        <MushroomCard key={mushroom.id} mushroom={mushroom} /> 
       ))}
     </ul>
   );
 }
 
 export default ResultsList;
-
