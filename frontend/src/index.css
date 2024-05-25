@@ -1,12 +1,11 @@
+/* Global styles (e.g., index.css) */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -54,6 +53,65 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Mushroom Card Styles */
+.mushroom-card {
+  background-color: rgba(36, 36, 36, 0.8); /* Dark background with transparency */
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* More prominent shadow for dark mode */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.87); /* Adjust text color for dark mode */
+}
+
+.mushroom-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Darken shadow on hover */
+  background-color: rgba(46, 46, 46, 0.85); /* Slightly darken background on hover */
+}
+
+.mushroom-card img {
+  max-width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.mushroom-card h3 {
+  margin: 10px 0;
+}
+
+/* Details Card */
+.details-card {
+  background-color: rgba(0, 0, 0, 0.8); /* Dark background for details */
+  border-radius: 8px;
+  padding: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  color: rgba(255, 255, 255, 0.87); /* Adjust text color for dark mode */
+}
+
+.mushroom-card:hover .details-card {
+  transform: translateY(0);
+}
+
+.details-card p {
+  margin-bottom: 10px;
+}
+
+.details-card strong {
+  font-weight: 600;
+}
+
+/* Light Mode Styles */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -64,5 +122,19 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+
+  .mushroom-card {
+    background-color: #f8f8f8; /* Light background for cards */
+    color: #333; /* Darker text color for light mode */
+  }
+
+  .mushroom-card:hover {
+    background-color: #e8e8e8; /* Slightly darker on hover */
+  }
+
+  .details-card {
+    background-color: rgba(255, 255, 255, 0.95); /* White background for details */
+    color: #333; /* Darker text color for details in light mode */
   }
 }

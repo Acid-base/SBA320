@@ -1,13 +1,13 @@
 // SearchBar.jsx - A React component for a searchable mushroom database with rate limiting
 import React, { useState, useRef } from 'react';
-import ResultsList from './ResultsList'; // Import ResultsList
 
-// Set the rate limit (in milliseconds) - adjust based on API guidelines
 const RATE_LIMIT_MS = 5000;
+let isFetching = false;
 
 const fetchMushrooms = async (searchTerm, pageNumber = 1) => {
   try {
-    let apiUrl = 'https://mushroomobserver.org/api2/observations?format=json&detail=high';
+    let apiUrl =
+      'https://mushroomobserver.org/api2/observations?format=json&detail=high';
 
     if (searchTerm) {
       apiUrl += `&name=${encodeURIComponent(searchTerm)}`;
@@ -18,21 +18,29 @@ const fetchMushrooms = async (searchTerm, pageNumber = 1) => {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      throw new Error(`API request failed with status: ${response.status}`);
+      if (response.status === 429) {
+        console.warn('Rate limit exceeded. Retrying in 5 seconds...');
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        return await fetchMushrooms(searchTerm, pageNumber); // Retry
+      } else {
+        throw new Error('Something went wrong with the API request!');
+      }
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);
-    // Handle errors appropriately (e.g., display an error message to the user)
+    throw error;
   }
 };
 
-function SearchBar({ onSearchChange }) { // Receive onSearchChange as a prop
+// Make fetchMushrooms accessible from outside SearchBar
+SearchBar.fetchMushrooms = fetchMushrooms;
+
+function SearchBar({ onSearchChange }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const lastRequestTime = useRef(0); // Track the last request time to enforce rate limiting
-  // Removed searchResults state
+
   const handleChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -40,38 +48,38 @@ function SearchBar({ onSearchChange }) { // Receive onSearchChange as a prop
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const currentTime = Date.now();
-    const timeSinceLastRequest = currentTime - lastRequestTime.current;
+    if (isFetching) {
+      console.warn('A fetch request is already in progress.');
+      return;
+    }
 
-    if (timeSinceLastRequest >= RATE_LIMIT_MS) {
-      lastRequestTime.current = currentTime; // Update last request time
+    isFetching = true;
 
-      try {
-        const data = await fetchMushrooms(searchTerm);
-        onSearchChange(data.results || []); // Pass results to App.jsx
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    } else {
-      // Handle rate limit: Display a message, implement a retry mechanism, etc.
-      console.warn('Rate limit exceeded. Please try again later.');
+    try {
+      const data = await fetchMushrooms(searchTerm);
+      onSearchChange(data.results || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error appropriately, e.g., by setting an error state
+    } finally {
+      setTimeout(() => {
+        isFetching = false;
+      }, RATE_LIMIT_MS);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleChange}
-          placeholder="Search for a mushroom..."
-        />
-        <button type="submit">Search</button>
-      </form>
-      <ResultsList results={[]} /> {/* ResultsList will now be managed in a parent component */} 
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={searchTerm}
+        onChange={handleChange}
+        placeholder="Search for a mushroom..."
+      />
+      <button type="submit">Search</button>
+    </form>
   );
 }
 
 export default SearchBar;
+
