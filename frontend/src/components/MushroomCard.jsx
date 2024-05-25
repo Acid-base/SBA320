@@ -3,21 +3,25 @@ import React, { useState } from 'react';
 import './MushroomCard.css'; // Import CSS for styling the hover effect
 
 function MushroomCard({ mushroom }) {
-  const [showDetails, setShowDetails] = useState(false);
+  // State to manage the visibility of the details card
+  const [showDetails, setShowDetails] = useState(false); 
+
+  // Get the image URL (adjust based on the API response structure)
+  const imageUrl = mushroom.primary_image?.medium_url || 'placeholder-image.jpg';
+
   return (
     <li 
-      className="mushroom-card" // Add a class for styling
+      className="mushroom-card" 
       onMouseEnter={() => setShowDetails(true)}
       onMouseLeave={() => setShowDetails(false)}
     >
-      <img src={mushroom.imageUrl} alt={mushroom.commonName} />
-      <h3>{mushroom.commonName}</h3>
-      <p>{mushroom.scientificName}</p>
+      <img src={imageUrl} alt={mushroom.name} /> 
+      <h3>{mushroom.name}</h3>
 
-      {showDetails && ( // Conditionally render details
+      {showDetails && ( 
         <div className="details-card"> 
-          {/* Add more details here as needed */}
-          <p><strong>Edibility:</strong> {mushroom.edibility || 'Unknown'}</p>
+          {/* Add more details here (adjust based on the API response) */}
+          <p><strong>Scientific Name:</strong> {mushroom.scientific_name}</p>
           {/* ... other details */}
         </div>
       )}
@@ -26,3 +30,4 @@ function MushroomCard({ mushroom }) {
 }
 
 export default MushroomCard;
+
