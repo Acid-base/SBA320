@@ -2,7 +2,20 @@
 
 const express = require('express');
 const router = express.Router();
-const Mushroom = require('../models/Mushroom'); // Import the Mushroom model
+// Import the Mushroom model 
+const Mushroom = require('../models/Mushroom'); 
+
+// Define the Mongoose model for Mushroom here (if not defined in a separate file)
+const mongoose = require('mongoose');
+
+const mushroomSchema = new mongoose.Schema({
+  scientificName: { type: String, required: true },
+  commonName: { type: String }, 
+  imageUrl: { type: String }, 
+  // ... other fields you want to store (description, habitat, etc.) 
+});
+
+const Mushroom = mongoose.model('Mushroom', mushroomSchema);
 
 // GET /mushrooms - Get a list of mushrooms
 router.get('/', async (req, res) => {
