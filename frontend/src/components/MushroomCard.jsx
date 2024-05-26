@@ -1,79 +1,109 @@
-// MushroomCard.jsx
+// src/components/MushroomCard.jsx - Component for displaying a single mushroom card
+
 import React, { useEffect, useRef, useState } from 'react';
-import placeholderImage from '../assets/istockphoto-503491608-2048x2048.jpg'; // Import your placeholder image
-import './MushroomCard.css';
+import placeholderImage from '../assets/istockphoto-503491608-2048x2048.jpg'; // Placeholder image
+import './MushroomCard.css'; // Import CSS for styling
 
-function MushroomCard({ mushroom, isSelected, onSelect }) { 
-  const [showDetails, setShowDetails] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
-  const imageRef = useRef(null);
+// Functional component for MushroomCard
+function MushroomCard({ mushroom, isSelected, onSelect }) {
+  // State to manage showing details
+  const [showDetails, setShowDetails] = useState(false); 
+  // State to manage the image URL
+  const [imageUrl, setImageUrl] = useState(null); 
+  // Create a ref to access the image element directly
+  const imageRef = useRef(null); 
 
-  const originalImageUrl = mushroom.primary_image?.original_url;
+  // Get the original image URL from the mushroom data
+  const originalImageUrl = mushroom.primary_image?.original_url; 
+
+  // useEffect to handle fetching and displaying the image when 'isSelected' changes
   useEffect(() => {
-    // Only fetch the image if the card is selected
+    // Only fetch and set the image if the card is selected
     if (isSelected) {
-      const img = imageRef.current;
+      // Get the image element from the ref
+      const img = imageRef.current; 
 
+      // Define an async function to load the image
       const loadImage = async () => {
+        // Proceed if the image element and original URL exist
         if (img && originalImageUrl) {
           try {
-            const response = await fetch(originalImageUrl);
+            // Fetch the image from the URL
+            const response = await fetch(originalImageUrl); 
+            // Check if the fetch was successful
             if (!response.ok) {
-              throw new Error('Failed to fetch image.');
+              // Throw an error if the fetch failed
+              throw new Error('Failed to fetch image.'); 
             }
-            const blob = await response.blob();
-            const objectURL = URL.createObjectURL(blob);
-            setImageUrl(objectURL);
+            // Convert the response to a Blob (Binary Large Object)
+            const blob = await response.blob(); 
+            // Create an object URL from the Blob, which can be used as an image source
+            const objectURL = URL.createObjectURL(blob); 
+            // Update the 'imageUrl' state with the newly created object URL
+            setImageUrl(objectURL); 
           } catch (error) {
-            console.error('Error loading image:', error);
-            // Handle image loading error (e.g., set a placeholder image)
+            // Log the error to the console if image loading fails
+            console.error('Error loading image:', error); 
+            // Handle the image loading error appropriately 
+            // (e.g., set a default placeholder image)
           }
         }
       };
 
+      // Call the async 'loadImage' function to start loading the image
       loadImage();
 
+      // Cleanup function to revoke the object URL when the component unmounts
+      // This is important to prevent memory leaks
       return () => {
-        // Clean up the object URL when the component unmounts
         if (imageUrl) {
-          URL.revokeObjectURL(imageUrl);
+          URL.revokeObjectURL(imageUrl); 
         }
       };
     }
-  }, [isSelected, originalImageUrl]);
+  }, [isSelected, originalImageUrl]); // Only re-run the effect if 'isSelected' or 'originalImageUrl' changes
 
+  // Function to handle clicks on the card
   const handleCardClick = () => {
+    // Call the 'onSelect' prop (passed from the parent component) with the mushroom's ID
     onSelect(mushroom.id);
   };
+
+  // JSX to render the mushroom card
   return (
     <li
       className="mushroom-card"
-      onClick={handleCardClick} // Call handleCardClick on click
-      onMouseEnter={() => setShowDetails(true)}
-      onMouseLeave={() => setShowDetails(false)}
+      onClick={handleCardClick} // Call 'handleCardClick' when the card is clicked
+      onMouseEnter={() => setShowDetails(true)} // Show details on mouse enter
+      onMouseLeave={() => setShowDetails(false)} // Hide details on mouse leave
     >
-      {isSelected && imageUrl ? ( // Only display if selected and image is loaded
+      {/* Conditionally render the image based on selection and image loading */}
+      {isSelected && imageUrl ? ( 
         <img ref={imageRef} src={imageUrl} alt={mushroom.name} />
       ) : (
-        <img src={placeholderImage} alt="Loading..." /> // Placeholder 
+        // Render a placeholder image while loading or if not selected
+        <img src={placeholderImage} alt="Loading..." /> 
       )}
-      <h3>{mushroom.name}</h3>
+      {/* Display the mushroom name */}
+      <h3>{mushroom.name}</h3> 
 
-      {showDetails && (
+      {/* Conditionally render the details card */}
+      {showDetails && ( 
         <div className="details-card">
-          {/* Add more details as needed based on your API response structure: */}
+          {/* Display additional mushroom details */}
           <p>
-            <strong>Scientific Name:</strong> {mushroom.scientific_name}
+            <strong>Scientific Name:</strong> {mushroom.scientific_name} 
           </p>
           <p>
             <strong>Description:</strong>{' '}
-            {mushroom.description || 'No description available.'}
+            {mushroom.description || 'No description available.'} 
           </p>
-          {/* ... other details */}
+          {/* ... other details can be added here */}
         </div>
       )}
     </li>
   );
 }
 
+// Export the MushroomCard component as the default export
 export default MushroomCard;
